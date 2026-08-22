@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-
   const { listUsers } = await import("../data/users");
   const formatter = new Intl.DateTimeFormat("en", {
     dateStyle: "medium",
@@ -13,24 +12,19 @@ export default async function Home() {
     <main className="shell">
       <div className="hero">
         <p className="eyebrow">Next.js + Prisma 8</p>
-
-        <h1>Users from your database, loaded on the server.</h1>
-        <p className="lede">
-          This page reads from <code>src/app/page.tsx</code> using the data helper in{" "}
-          <code>src/data/users.ts</code>.
-        </p>
+        <h1>Users from your database, loaded on the server</h1>
       </div>
 
       <section className="panel">
         <div className="panelHeader">
-          <h2>Seeded users</h2>
-          <span>{users?.length ?? 0} total</span>
+          <code>Seeded users</code>
+          <code>{users?.length ?? 0} total</code>
         </div>
 
         {!users ? (
           <p className="empty">
-            Could not query users yet. Run <code>contract:emit</code> and apply your schema,
-            then refresh.
+            Could not query users yet. Run <code>contract:emit</code> and apply
+            your schema, then refresh.
           </p>
         ) : users.length === 0 ? (
           <p className="empty">No users found.</p>
@@ -54,7 +48,6 @@ export default async function Home() {
           </ul>
         )}
       </section>
-
     </main>
   );
 }
