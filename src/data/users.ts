@@ -1,0 +1,25 @@
+import { db } from "../prisma/db.ts";
+import { seed } from "./seed.ts";
+
+export async function listUsers(limit = 10) {
+  await seed();
+  const users = await db.orm.public.User.select(
+    "id",
+    "email",
+    "username",
+    "name",
+    "createdAt",
+  )
+    .take(limit)
+    .all();
+
+  return users.map((user) => ({
+    id: String(user.id),
+    email: user.email,
+    username: user.username ?? null,
+    name: user.name ?? null,
+    createdAt: user.createdAt,
+  }));
+}
+
+export type StarterUser = Awaited<ReturnType<typeof listUsers>>[number];
