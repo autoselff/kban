@@ -98,7 +98,6 @@ button {
   border: 1px solid var(--border);
   border-radius: 0.4rem;
   padding: 0.55rem 0.9rem;
-  margin-top: 0.85rem;
   cursor: pointer;
 }
 

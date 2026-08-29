@@ -1,6 +1,7 @@
 import { prisma, seed } from "../lib/db";
 import AddUserButton from "./components/buttons/add-user-button";
 import ExampleButton from "./components/buttons/add-user-button";
+import RemoveUserButton from "./components/buttons/remove-user-button";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,11 @@ export default async function Home() {
       <section className="panel">
         <div className="panelHeader">
           <code>Seeded users</code>
+          <AddUserButton />
+          <RemoveUserButton />
           <code>{users.length} total</code>
         </div>
+
         <ul className="users">
           {users.map((user) => (
             <li key={user.id}>
@@ -38,8 +42,6 @@ export default async function Home() {
             </li>
           ))}
         </ul>
-
-        <AddUserButton />
       </section>
     </main>
   );
