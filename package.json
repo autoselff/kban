@@ -2,47 +2,27 @@
   "name": "oarch",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "npm@10.9.0",
-  "type": "module",
   "scripts": {
-    "build": "next build",
-    "composer:deploy": "npx --yes prisma@next composer deploy module.ts",
-    "composer:destroy": "npx --yes prisma@next composer destroy module.ts --production",
-    "composer:dev": "npx --yes prisma@next composer dev module.ts",
-    "contract:emit": "npx --yes prisma@next contract emit",
-    "db:init": "npx --yes prisma@next db init",
-    "db:update": "npx --yes prisma@next db update",
-    "db:verify": "npx --yes prisma@next db verify",
-    "deploy": "npm run build && npm run composer:deploy",
     "dev": "next dev",
-    "dev:composer": "npm run build && npm run composer:dev",
-    "lint": "eslint",
-    "migrate": "npx --yes prisma@next migrate",
-    "migration:plan": "npx --yes prisma@next migration plan",
-    "migration:show": "npx --yes prisma@next migration show",
-    "migration:status": "npx --yes prisma@next migration status",
-    "start": "next start"
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "postinstall": "prisma generate",
+    "db": "prisma db push"
   },
   "dependencies": {
-    "@prisma/composer": "0.10.0",
-    "@prisma/composer-prisma-cloud": "0.10.0",
-    "@prisma/orm-postgres": "8.0.0-rc.4",
-    "alchemy": "2.0.0-beta.67",
+    "@prisma/client": "^6",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@prisma/cli-engine": "0.2.0",
     "@types/node": "^25.6.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "tsx": "^4.7.1",
+    "prisma": "^6",
     "typescript": "^5.9.3"
   },
-  "overrides": {
-    "effect": "4.0.0-beta.103"
+  "prisma": {
+    "schema": "db/schema.prisma"
   }
 }
