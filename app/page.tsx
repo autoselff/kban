@@ -12,7 +12,7 @@ const formatter = new Intl.DateTimeFormat("en", {
 
 export default async function Home() {
   await seed();
-  const users = await prisma.user.findMany({ take: 10, orderBy: { id: "asc" } });
+  const users = await prisma.user.findMany({ orderBy: { id: "asc" } });
 
   return (
     <main className="shell">
@@ -24,8 +24,13 @@ export default async function Home() {
       <section className="panel">
         <div className="panelHeader">
           <code>Seeded users</code>
+
           <AddUserButton />
-          <RemoveUserButton />
+
+          {users.length >= 1 ? (
+            <RemoveUserButton />
+          ) : ( null )}
+
           <code>{users.length} total</code>
         </div>
 
