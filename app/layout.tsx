@@ -9,7 +9,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "oarch",
+  title: "kban",
 };
 
 export default function RootLayout({

@@ -7,10 +7,30 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-model User {
+model Card {
   id Int @id @default(autoincrement())
-  email String @unique
-  username String?
-  name String?
-  createdAt DateTime @default(now())
+  title String @unique
+  description String
+  columnOrder Int
+  columnId Int
+  column Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  @@unique([columnId, columnOrder])
+}
+
+model Column {
+  id Int @id @default(autoincrement())
+  title String @unique
+  order Int
+  boardId Int
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards Card[]
+
+  @@unique([boardId, order])
+}
+
+model Board {
+  id Int @id @default(autoincrement())
+  title String @unique
+  columns Column[]
 }
