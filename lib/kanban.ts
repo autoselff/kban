@@ -136,6 +136,11 @@ export async function addColumn(title: string) {
   return String(column.id);
 }
 
+export async function deleteColumn(id: string) {
+  await prisma.column.delete({ where: { id: Number(id) } });
+  revalidatePath("/");
+}
+
 export async function addCard(
   columnId: string,
   title: string,

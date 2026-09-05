@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   addCard as addCardAction,
   addColumn as addColumnAction,
+  deleteColumn as deleteColumnAction,
   moveCard as moveCardAction,
   updateBoard as updateBoardAction,
   updateCard as updateCardAction,
@@ -34,6 +35,14 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
         { id, title, order: board.columns.length, cards: [] },
       ],
     }));
+  }
+
+  function deleteColumn(id: string) {
+    setBoard({
+      ...board,
+      columns: board.columns.filter((column) => column.id !== id),
+    });
+    deleteColumnAction(id);
   }
 
   async function addCard(columnId: string, title: string) {
@@ -138,6 +147,7 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
             column={column}
             onAddCard={(title) => addCard(column.id, title)}
             onUpdateCard={updateCard}
+            onDelete={() => deleteColumn(column.id)}
             onDropCard={(cardId, toIndex) =>
               moveCard(cardId, column.id, toIndex)
             }

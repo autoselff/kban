@@ -221,6 +221,11 @@ textarea {
   margin-bottom: 0;
 }
 
+.iconBtn {
+  padding: 0.15rem 0.5rem;
+  line-height: 1;
+}
+
 .cards {
   display: grid;
   align-content: start;

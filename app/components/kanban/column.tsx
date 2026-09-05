@@ -8,6 +8,7 @@ export default function Column({
   column,
   onAddCard,
   onUpdateCard,
+  onDelete,
   onDropCard,
 }: {
   column: ColumnType;
@@ -16,6 +17,7 @@ export default function Column({
     cardId: string,
     data: { title: string; description: string },
   ) => void;
+  onDelete: () => void;
   onDropCard: (cardId: string, toIndex: number) => void;
 }) {
   return (
@@ -31,6 +33,16 @@ export default function Column({
       <div className="panelHeader">
         <h2>{column.title}</h2>
         <code>{column.cards.length}</code>
+        <button
+          type="button"
+          className="iconBtn"
+          aria-label="Delete column"
+          onClick={() => {
+            if (confirm("Delete this column?")) onDelete();
+          }}
+        >
+          ×
+        </button>
       </div>
 
       <div className="cards">
