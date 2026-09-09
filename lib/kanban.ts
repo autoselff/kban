@@ -226,3 +226,27 @@ export async function moveCard(
 
   revalidatePath("/");
 }
+
+export async function moveColumn(id: string, toIndex: number) {
+  const colId = Number(id);
+
+  await prisma.$transaction(async (tx) => {
+    const col = await tx.column.findUniqueOrThrow({ where: { id: colId } });
+    const cols = await tx.column.findMany({
+      where: { boardId: col.boardId },
+      orderBy: { order: "asc" },
+    });
+    const rest = cols.filter((c) => c.id !== colId);
+    rest.splice(toIndex, 0, col);
+
+    let temp = -1;
+    for (const c of cols) {
+      await tx.column.update({ where: { id: c.id }, data: { order: temp-- } });
+    }
+    for (let i = 0; i < rest.length; i++) {
+      await tx.column.update({ where: { id: rest[i].id }, data: { order: i } });
+    }
+  });
+
+  revalidatePath("/");
+}

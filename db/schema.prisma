@@ -9,7 +9,7 @@ datasource db {
 
 model Card {
   id Int @id @default(autoincrement())
-  title String @unique
+  title String
   description String
   columnOrder Int
   columnId Int
@@ -20,7 +20,7 @@ model Card {
 
 model Column {
   id Int @id @default(autoincrement())
-  title String @unique
+  title String
   order Int
   boardId Int
   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)

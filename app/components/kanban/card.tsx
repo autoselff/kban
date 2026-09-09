@@ -5,10 +5,16 @@ import type { Card as CardType } from "@/lib/kanban";
 
 export default function Card({
   card,
+  dragging,
   onUpdate,
+  onDragStart,
+  onDragEnd,
 }: {
   card: CardType;
+  dragging: boolean;
   onUpdate: (data: { title: string; description: string }) => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(card.title);
@@ -31,12 +37,15 @@ export default function Card({
 
   return (
     <article
-      className="card"
+      className={`card${dragging ? " dragging" : ""}`}
       draggable={!editing}
       onDragStart={(e) => {
-        e.dataTransfer.setData("text/plain", card.id);
+        e.stopPropagation();
+        e.dataTransfer.setData("text/plain", `card:${card.id}`);
         e.dataTransfer.effectAllowed = "move";
+        onDragStart();
       }}
+      onDragEnd={onDragEnd}
     >
       <button type="button" className="cardBody" onClick={() => setEditing(true)}>
         <strong>{card.title}</strong>

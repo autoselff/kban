@@ -185,12 +185,23 @@ textarea {
   margin-bottom: 0.2rem;
 }
 
-.boardShell h1 {
+.boardTitle {
+  display: block;
+  width: min(36rem, 100%);
+  font-family: var(--font-sans);
   font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.45rem;
+  margin-left: -0.45rem;
 }
 
-.boardTitle {
-  cursor: text;
+.boardTitle:hover {
+  border-color: var(--border);
 }
 
 .board {
@@ -204,8 +215,8 @@ textarea {
 }
 
 .column {
-  flex: 0 0 18rem;
-  width: 18rem;
+  flex: 0 0 22rem;
+  width: 22rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -219,6 +230,41 @@ textarea {
 
 .column .panelHeader {
   margin-bottom: 0;
+}
+
+.column .panelHeader h2 {
+  flex: 1;
+  min-width: 0;
+}
+
+.column.dragging {
+  opacity: 0.4;
+}
+
+.column.dragOver {
+  border-color: var(--teal);
+}
+
+.grip {
+  cursor: grab;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  padding: 0.1rem 0.25rem;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1;
+}
+
+.grip:hover {
+  color: var(--teal);
+  border-color: transparent;
+}
+
+.grip:active {
+  cursor: grabbing;
+  background: transparent;
 }
 
 .iconBtn {
@@ -239,6 +285,29 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 0.4rem;
   background: var(--bg);
+  cursor: grab;
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.card.dragging {
+  opacity: 0.35;
+}
+
+.dropLine {
+  height: 3px;
+  margin: 0.15rem 0;
+  background: var(--teal);
+  border-radius: 99px;
+}
+
+.dropCol {
+  flex: 0 0 4px;
+  align-self: stretch;
+  background: var(--teal);
+  border-radius: 99px;
 }
 
 .cardBody {
@@ -253,6 +322,7 @@ textarea {
   border: 0;
   border-radius: 0.4rem;
   padding: 0.75rem 0.85rem;
+  cursor: grab;
 }
 
 .cardBody:hover {
@@ -310,8 +380,8 @@ textarea {
 }
 
 .addColumn {
-  flex: 0 0 18rem;
-  width: 18rem;
+  flex: 0 0 22rem;
+  width: 22rem;
   align-self: start;
   justify-content: flex-start;
   min-height: auto;
