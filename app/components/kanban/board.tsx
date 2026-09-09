@@ -47,7 +47,7 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
   }
 
   async function addColumn(nextTitle: string) {
-    const id = await addColumnAction(nextTitle);
+    const id = await addColumnAction(board.id, nextTitle);
     setBoard((board) => ({
       ...board,
       columns: [
@@ -163,8 +163,8 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
 
   return (
     <>
-      <div className="hero">
-        <p className="eyebrow">kban</p>
+      <div className="hero boardBar">
+        <a className="back" href="/">Boards</a>
         <input
           className="boardTitle"
           value={title}

@@ -67,52 +67,33 @@ const boardInclude = {
   },
 };
 
-async function ensureBoard() {
-  const existing = await prisma.board.findFirst({ include: boardInclude });
-  if (existing) return existing;
-
-  await prisma.board.create({
-    data: {
-      title: "Project board",
-      columns: {
-        create: [
-          {
-            title: "To do",
-            order: 0,
-            cards: {
-              create: [
-                {
-                  title: "Define Prisma models",
-                  description: "Board, Column, Card",
-                  columnOrder: 0,
-                },
-              ],
-            },
-          },
-          {
-            title: "In progress",
-            order: 1,
-            cards: {
-              create: [
-                {
-                  title: "Kanban UI",
-                  description: "Columns, cards, drag and drop",
-                  columnOrder: 0,
-                },
-              ],
-            },
-          },
-          { title: "Done", order: 2 },
-        ],
-      },
-    },
-  });
-
-  return prisma.board.findFirstOrThrow({ include: boardInclude });
+function touch() {
+  revalidatePath("/", "layout");
 }
 
-export async function getBoard(): Promise<Board> {
-  return mapBoard(await ensureBoard());
+export async function listBoards() {
+  const boards = await prisma.board.findMany({ orderBy: { id: "asc" } });
+  return boards.map((b) => ({ id: String(b.id), title: b.title }));
+}
+
+export async function getBoard(id: string): Promise<Board> {
+  const board = await prisma.board.findUnique({
+    where: { id: Number(id) },
+    include: boardInclude,
+  });
+  if (!board) throw new Error("Board not found");
+  return mapBoard(board);
+}
+
+export async function createBoard(title: string) {
+  const board = await prisma.board.create({ data: { title } });
+  touch();
+  return String(board.id);
+}
+
+export async function deleteBoard(id: string) {
+  await prisma.board.delete({ where: { id: Number(id) } });
+  touch();
 }
 
 export async function updateBoard(
@@ -120,25 +101,25 @@ export async function updateBoard(
   data: { title: string },
 ) {
   await prisma.board.update({ where: { id: Number(id) }, data });
-  revalidatePath("/");
+  touch();
 }
 
-export async function addColumn(title: string) {
-  const board = await prisma.board.findFirstOrThrow();
+export async function addColumn(boardId: string, title: string) {
+  const bId = Number(boardId);
   const last = await prisma.column.findFirst({
-    where: { boardId: board.id },
+    where: { boardId: bId },
     orderBy: { order: "desc" },
   });
   const column = await prisma.column.create({
-    data: { title, order: (last?.order ?? -1) + 1, boardId: board.id },
+    data: { title, order: (last?.order ?? -1) + 1, boardId: bId },
   });
-  revalidatePath("/");
+  touch();
   return String(column.id);
 }
 
 export async function deleteColumn(id: string) {
   await prisma.column.delete({ where: { id: Number(id) } });
-  revalidatePath("/");
+  touch();
 }
 
 export async function addCard(
@@ -159,7 +140,7 @@ export async function addCard(
       columnOrder: (last?.columnOrder ?? -1) + 1,
     },
   });
-  revalidatePath("/");
+  touch();
   return String(card.id);
 }
 
@@ -168,7 +149,7 @@ export async function updateCard(
   data: { title: string; description: string },
 ) {
   await prisma.card.update({ where: { id: Number(id) }, data });
-  revalidatePath("/");
+  touch();
 }
 
 export async function moveCard(
@@ -224,7 +205,7 @@ export async function moveCard(
     }
   });
 
-  revalidatePath("/");
+  touch();
 }
 
 export async function moveColumn(id: string, toIndex: number) {
@@ -248,5 +229,5 @@ export async function moveColumn(id: string, toIndex: number) {
     }
   });
 
-  revalidatePath("/");
+  touch();
 }

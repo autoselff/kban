@@ -31,6 +31,6 @@ model Column {
 
 model Board {
   id Int @id @default(autoincrement())
-  title String @unique
+  title String
   columns Column[]
 }
