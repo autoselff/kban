@@ -11,6 +11,7 @@ model Card {
   id Int @id @default(autoincrement())
   title String
   description String
+  badgeColor String?
   columnOrder Int
   columnId Int
   column Column @relation(fields: [columnId], references: [id], onDelete: Cascade)

@@ -7,22 +7,28 @@ export default function Card({
   card,
   dragging,
   onUpdate,
+  onDelete,
   onDragStart,
   onDragEnd,
 }: {
   card: CardType;
   dragging: boolean;
   onUpdate: (data: { title: string; description: string }) => void;
+  onDelete: () => void;
   onDragStart: () => void;
   onDragEnd: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description);
+  const [badgeColor, setBadgeColor] = useState(card.badgeColor ?? "#2dd4bf");
+  const [badgeEnabled, setBadgeEnabled] = useState(card.badgeColor !== null);
 
   function close() {
     setTitle(card.title);
     setDescription(card.description);
+    setBadgeColor(card.badgeColor ?? "#2dd4bf");
+    setBadgeEnabled(card.badgeColor !== null);
     setEditing(false);
   }
 
@@ -38,6 +44,11 @@ export default function Card({
   return (
     <article
       className={`card${dragging ? " dragging" : ""}`}
+      style={
+        card.badgeColor
+          ? { borderLeft: `5px solid ${card.badgeColor}` }
+          : undefined
+      }
       draggable={!editing}
       onDragStart={(e) => {
         e.stopPropagation();
@@ -61,7 +72,11 @@ export default function Card({
               e.preventDefault();
               const nextTitle = title.trim();
               if (!nextTitle) return;
-              onUpdate({ title: nextTitle, description: description.trim() });
+              onUpdate({
+                title: nextTitle,
+                description: description.trim(),
+                badgeColor: badgeEnabled ? badgeColor : null,
+              });
               setEditing(false);
             }}
           >
@@ -77,10 +92,35 @@ export default function Card({
               aria-label="Card description"
               rows={5}
             />
+            <label className="badgePicker">
+              <input
+                type="checkbox"
+                checked={badgeEnabled}
+                onChange={(e) => setBadgeEnabled(e.target.checked)}
+              />
+              <span className="checkboxMark" aria-hidden="true" />
+              Badge
+              <input
+                type="color"
+                value={badgeColor}
+                disabled={!badgeEnabled}
+                onChange={(e) => setBadgeColor(e.target.value)}
+                aria-label="Badge color"
+              />
+            </label>
             <div className="cardActions">
               <button type="submit">Save</button>
               <button type="button" onClick={close}>
                 Cancel
+              </button>
+              <button
+                type="button"
+                className="deleteCard"
+                onClick={() => {
+                  if (confirm("Delete this card?")) onDelete();
+                }}
+              >
+                Delete
               </button>
             </div>
           </form>

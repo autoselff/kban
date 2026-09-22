@@ -7,6 +7,7 @@ export type Card = {
   id: string;
   title: string;
   description: string;
+  badgeColor: string | null;
   columnId: string;
   order: number;
 };
@@ -53,6 +54,7 @@ function mapBoard(
         id: String(card.id),
         title: card.title,
         description: card.description,
+        badgeColor: card.badgeColor,
         columnId: String(card.columnId),
         order: card.columnOrder,
       })),
@@ -122,6 +124,11 @@ export async function deleteColumn(id: string) {
   touch();
 }
 
+export async function updateColumn(id: string, data: { title: string }) {
+  await prisma.column.update({ where: { id: Number(id) }, data });
+  touch();
+}
+
 export async function addCard(
   columnId: string,
   title: string,
@@ -136,6 +143,7 @@ export async function addCard(
     data: {
       title,
       description,
+      badgeColor: null,
       columnId: colId,
       columnOrder: (last?.columnOrder ?? -1) + 1,
     },
@@ -146,9 +154,14 @@ export async function addCard(
 
 export async function updateCard(
   id: string,
-  data: { title: string; description: string },
+  data: { title: string; description: string; badgeColor: string | null },
 ) {
   await prisma.card.update({ where: { id: Number(id) }, data });
+  touch();
+}
+
+export async function deleteCard(id: string) {
+  await prisma.card.delete({ where: { id: Number(id) } });
   touch();
 }
 

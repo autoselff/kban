@@ -4,11 +4,13 @@ import { Fragment, useState } from "react";
 import {
   addCard as addCardAction,
   addColumn as addColumnAction,
+  deleteCard as deleteCardAction,
   deleteColumn as deleteColumnAction,
   moveCard as moveCardAction,
   moveColumn as moveColumnAction,
   updateBoard as updateBoardAction,
   updateCard as updateCardAction,
+  updateColumn as updateColumnAction,
   type Board,
 } from "@/lib/kanban";
 import AddColumn from "./add-column";
@@ -22,7 +24,7 @@ type Over =
   | { type: "card"; columnId: string; index: number }
   | { type: "column"; index: number };
 
-function midIndex(client: number, els: Element[], axis: "x" | "y") {
+function midIndex(client: number, els: Iterable<Element>, axis: "x" | "y") {
   const i = [...els].findIndex((el) => {
     const r = el.getBoundingClientRect();
     return client < (axis === "x" ? r.left + r.width / 2 : r.top + r.height / 2);
@@ -65,6 +67,27 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
     deleteColumnAction(id);
   }
 
+  function updateColumn(id: string, title: string) {
+    setBoard({
+      ...board,
+      columns: board.columns.map((column) =>
+        column.id === id ? { ...column, title } : column,
+      ),
+    });
+    updateColumnAction(id, { title });
+  }
+
+  function deleteCard(id: string) {
+    setBoard({
+      ...board,
+      columns: board.columns.map((column) => ({
+        ...column,
+        cards: column.cards.filter((card) => card.id !== id),
+      })),
+    });
+    deleteCardAction(id);
+  }
+
   async function addCard(columnId: string, cardTitle: string) {
     const id = await addCardAction(columnId, cardTitle, "");
     setBoard((board) => ({
@@ -80,6 +103,7 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
                   id,
                   title: cardTitle,
                   description: "",
+                  badgeColor: null,
                   columnId,
                   order: column.cards.length,
                 },
@@ -91,7 +115,7 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
 
   function updateCard(
     cardId: string,
-    data: { title: string; description: string },
+    data: { title: string; description: string; badgeColor: string | null },
   ) {
     setBoard({
       ...board,
@@ -218,6 +242,8 @@ export default function KanbanBoard({ initial }: { initial: Board }) {
               }
               onAddCard={(cardTitle) => addCard(column.id, cardTitle)}
               onUpdateCard={updateCard}
+              onDeleteCard={deleteCard}
+              onUpdateColumn={(title) => updateColumn(column.id, title)}
               onDelete={() => deleteColumn(column.id)}
               onCardDragStart={(id) => setDrag({ type: "card", id })}
               onColumnDragStart={() => setDrag({ type: "column", id: column.id })}

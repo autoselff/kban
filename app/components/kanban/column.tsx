@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { Column as ColumnType } from "@/lib/kanban";
 import AddCard from "./add-card";
 import Card from "./card";
@@ -20,6 +21,8 @@ export default function Column({
   dropIndex,
   onAddCard,
   onUpdateCard,
+  onDeleteCard,
+  onUpdateColumn,
   onDelete,
   onCardDragStart,
   onColumnDragStart,
@@ -34,8 +37,10 @@ export default function Column({
   onAddCard: (title: string) => void;
   onUpdateCard: (
     cardId: string,
-    data: { title: string; description: string },
+    data: { title: string; description: string; badgeColor: string | null },
   ) => void;
+  onDeleteCard: (cardId: string) => void;
+  onUpdateColumn: (title: string) => void;
   onDelete: () => void;
   onCardDragStart: (id: string) => void;
   onColumnDragStart: () => void;
@@ -43,6 +48,19 @@ export default function Column({
   onDropCard: (cardId: string, toIndex: number) => void;
   onDragEnd: () => void;
 }) {
+  const [title, setTitle] = useState(column.title);
+
+  useEffect(() => setTitle(column.title), [column.title]);
+
+  function saveTitle() {
+    const next = title.trim();
+    if (!next || next === column.title) {
+      setTitle(column.title);
+      return;
+    }
+    onUpdateColumn(next);
+  }
+
   return (
     <section
       className={`column${dragging ? " dragging" : ""}${dropIndex != null ? " dragOver" : ""}`}
@@ -76,7 +94,20 @@ export default function Column({
         >
           ⠿
         </button>
-        <h2>{column.title}</h2>
+        <input
+          className="columnTitle"
+          value={title}
+          aria-label="Column name"
+          onChange={(e) => setTitle(e.target.value)}
+          onBlur={saveTitle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+            if (e.key === "Escape") {
+              setTitle(column.title);
+              e.currentTarget.blur();
+            }
+          }}
+        />
         <button
           type="button"
           className="iconBtn"
@@ -97,6 +128,7 @@ export default function Column({
               card={card}
               dragging={draggingCardId === card.id}
               onUpdate={(data) => onUpdateCard(card.id, data)}
+              onDelete={() => onDeleteCard(card.id)}
               onDragStart={() => onCardDragStart(card.id)}
               onDragEnd={onDragEnd}
             />
